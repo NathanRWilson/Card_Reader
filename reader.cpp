@@ -1,8 +1,8 @@
-#include<iostream>
-#include<string>
-#include<ctime>
-#include<sstream>
-#include<fstream>
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -12,11 +12,16 @@ string end = "/";
 string opening();
 void error_check(string& input);
 string parse_name(string& input);
-string date();
+string date_getter();
+string time_getter();
+
 
 int main() {
+	cout << "**************************" << endl;
+    cout << "*****     Hello!     *****" << endl;
+    cout << "**************************" << endl << endl;
     string input = opening();
-    void error_check(input);
+    error_check(input);
     while (input != "exit") {
 
         //Parse out the string for name
@@ -26,17 +31,17 @@ int main() {
         cout << endl << name << endl;
 
         //Find out the current date
-        string date = date();
+        string date = date_getter();
 
         //Find time of swipe in
-        string time = time();
+        string time = time_getter();
 
         //make date into the filename for output file
         date.append(".csv");
 
         //write name and time to output file
         ofstream out;
-        out.open(date, ios_base::app);
+        out.open(date.c_str(), ios_base::app);
         out << name << "," << time << endl;
         out.close();
 
@@ -48,9 +53,6 @@ int main() {
 }
 
 string opening() {
-	cout << "**************************" << endl;
-    cout << "*****     Hello!     *****" << endl;
-    cout << "**************************" << endl << endl;
     cout << "Swipe your Mcard or type 'exit': " << endl;
     string input;
     getline(cin, input);
@@ -65,6 +67,7 @@ void error_check(string& input) {
         cout << endl << "*******************************" << endl;
         cout << "***Invalid input, try again:***" << endl;
         cout << "*******************************" << endl;
+        cout << "Swpie your Mcard of type 'exit': " << endl;
         getline(cin, input);
     }
    	return;
@@ -75,7 +78,7 @@ string parse_name(string& input) {
 	return name;
 }
 
-string date() {
+string date_getter() {
 	string date;
     stringstream ss;
     time_t t = time(0);
@@ -88,9 +91,11 @@ string date() {
     return date;
 }
 
-string time() {
-	string time;
+string time_getter() {
+	string swipe_time;
     string am_pm;
+    time_t t = time(0);
+    struct tm * now = localtime(&t);
     int hour = now->tm_hour % 12;
     int min = now->tm_min;
     string min_print;
@@ -98,23 +103,24 @@ string time() {
       	stringstream ss;
        	ss << "0" << min;
        	ss >> min_print;
+    } else {
+    	min_print = std::to_string(min);
     }
     if (hour == 0) {
         hour = 12;
     }
     if (now->tm_hour >= 12) {
         am_pm = "pm";
-    }
-    else {
+    } else {
     	am_pm = "am";
     }
 
     //make a string of the time
     stringstream ss;
-    ss << hour << ":" << min_print << am_pm << endl;
-    ss >> time;
+    ss << hour << ":" << min << am_pm << endl;
+    ss >> swipe_time;
 
     //tell user time they clocked in and make a noise
-    cout << time << '\a' << endl << endl;
-    return time;
+    cout << swipe_time << '\a' << endl << endl;
+    return swipe_time;
 }
