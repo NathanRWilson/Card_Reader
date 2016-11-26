@@ -104,7 +104,9 @@ string time_getter() {
        	ss << "0" << min;
        	ss >> min_print;
     } else {
-    	min_print = std::to_string(min);
+    	stringstream ss;
+    	ss << min;
+    	ss >> min_print;
     }
     if (hour == 0) {
         hour = 12;
